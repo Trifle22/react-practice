@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './stylesNew.css';
-import { Button } from '@material-ui/core';
 import Switch from '@material-ui/core/Switch';
+
 
 
 export default class Ccomponent extends Component {
@@ -9,81 +9,90 @@ export default class Ccomponent extends Component {
     super(props);
   
     this.state = {
-      input: '',
-      items: [],
-      checkedA: true,
+      checkedA: false,
+      url: 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Non_Alcoholic',
+      error: null,
+      isloaded: false,
+      items: []
     };
-
     this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(event) {
-    this.setState({
-      input: event.target.value.trim(),
-    });
-  }
-
-  handleSubmit(event) {
-    event.preventDefault();
-    if (this.state.input) {
+  componentDidMount() {
+    fetch(this.state.url)
+    .then(res => res.json())
+    .then((result) => {
       this.setState({
-        input: this.state.input,
-        items: [...this.state.items, this.state.input]
+        isloaded: true,
+        items: result.drinks
       });
-    } else {
-      alert('Введите что-либо')
-    }
+    },
+      (error) => {
+        this.setState({
+          isloaded: true,
+          error
+        })
+      }
+    )
   }
 
-  handleChange = (event) => {
-    const appHeader = document.querySelector('.App-header');
-    const title = document.querySelector('.hello');
-    this.setState({[event.target.name]: event.target.checked });
-    if (this.state.checkedA) {
-      appHeader.style.backgroundColor = '#333333';
-      title.textContent = 'Night';
-    } else {
-      appHeader.style.backgroundColor = 'white';
-      title.textContent = 'Day';
-
-    }
-  };
-
-  resetBgrColor() {
-    document.querySelector('.App-header').style.backgroundColor = '';
+  componentWillUpdate() {
+    fetch(this.state.url)
+    .then(res => res.json())
+    .then((result) => {
+      this.setState({
+        isloaded: true,
+        items: result.drinks
+      });
+    },
+      (error) => {
+        this.setState({
+          isloaded: true,
+          error
+        })
+      }
+    )
   }
 
+
+  handleChange() {
+    this.setState({
+      checkedA: !this.state.checkedA,
+      url: 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Alcoholic'
+    })
+    console.log(this.state.url);
+  }
 
   render() {
-    return (
-      <div>
+    const {error, isloaded, items} = this.state;
+    if (error) {
+      return <p>error : {error.message}</p>;
+    } else if (!isloaded) {
+      return <p>loading...</p>;
+    } else {
+      return (
+        <div>
+          <span>non_alcoholic</span>
         <Switch
-        checked={this.state.checkedA}
-        onChange={this.handleChange}
-        name="checkedA"
-        inputProps={{ 'aria-label': 'secondary checkbox' }}
-      />
-        <h1 className="hello">Hello</h1>
-        <Button variant="contained" color="primary">
-        Primary
-        </Button>
-        <Button variant="contained" color="secondary">
-        Secondary
-        </Button>
-        <Button variant="contained" color="secondary" onClick={this.resetBgrColor}>
-        ResetBgrColor
-        </Button>
-        <form onSubmit={this.handleSubmit}>
-        <input value={this.state.input} onChange={this.handleChange}/>
-        <button type="submit">Submit</button>
-        </form>
-        <ol>
-          {this.state.items.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ol>
-      </div>
-    );
+          checked={this.state.checkedA}
+          onChange={this.handleChange}
+          name="checkedA"
+          inputProps={{ 'aria-label': 'secondary checkbox' }}
+          color="primary"
+        />
+        <span>alcoholic</span>
+          <ul>
+            {items.map(item => (
+              <li key={item.idDrink} className="coctail-item">
+                {item.strDrink}
+                <img src={item.strDrinkThumb} alt={item.name} className="coctail-img"/>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
   }
+
 }
+

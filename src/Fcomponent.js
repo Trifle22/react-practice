@@ -1,9 +1,18 @@
-import React from 'react'
+import React, { Component } from 'react';
 
-export default function Fcomponent(props) {
-  return (
-    <div>
-      <h1>Hello, {props.name}</h1>
-    </div>
-  )
+export default class Fcomponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: 'ButtonPressed'
+    }
+  }
+  
+  render() {
+    return (
+      <div>
+        <button onClick={() => {this.props.updateData(this.state.name)}}>Press button</button>
+      </div>
+    )
+  }
 }

@@ -1,22 +1,11 @@
-.hello{
-  color: red;
-  font-size: 60px;
-  transition: all 0.5s ease-in-out;
-  animation: wheel 1.5s infinite ease-in-out;
+.coctail-img {
+  max-width: 100px;
+  max-height: 200px;
 }
-
-.hello:hover {
-  color: yellow;
-}
-
-@keyframes wheel {
-  0% {
-    transform: rotate(0deg);
-  }
-  50% {
-    transform: rotate(180deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+.coctail-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
 }
